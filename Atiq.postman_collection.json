@@ -1,0 +1,487 @@
+{
+	"info": {
+		"_postman_id": "9c922ed7-4afa-4d8c-8608-f64c9538e418",
+		"name": "Atiq",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29357619",
+		"_collection_link": "https://solar-sunset-5918.postman.co/workspace/SQA-Sekha-Practice~1a72d880-032f-4362-80a9-6bdcbae838d7/collection/29357619-9c922ed7-4afa-4d8c-8608-f64c9538e418?action=share&source=collection_link&creator=29357619"
+	},
+	"item": [
+		{
+			"name": "Get Student",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"\r",
+							"\r",
+							"//1. Write a test case for Status Code Validation\r",
+							"    var resCode = pm.response.code\r",
+							"    \r",
+							"\r",
+							"    console.log(\"The response cosde is =\\t\"+resCode)\r",
+							"    \r",
+							"    pm.environment.set(\"ID\",jsonData[0].id)\r",
+							"    pm.environment.set(\"firstName\",jsonData[0].first_name)\r",
+							"    pm.environment.set(\"middle_name\",jsonData[0].middle_name)\r",
+							"    pm.environment.set(\"last_name\",jsonData[0].last_name)\r",
+							"    pm.environment.set(\"date_of_birth\",jsonData[0].date_of_birth)\r",
+							"\r",
+							"    switch(resCode){\r",
+							"        case 200:\r",
+							"            console.log(\"Status Code 200 OK\")\r",
+							"\r",
+							"            pm.test(\"ID Validate\",function(){\r",
+							"                pm.expect(jsonData.first_name).to.eql.toString(pm.environment.get(\"ID\"))\r",
+							"            })\r",
+							"            pm.test(\"First Name Validate\",function(){\r",
+							"                pm.expect(jsonData.first_name).to.eql.toString(pm.environment.get(\"firstName\"))\r",
+							"            })\r",
+							"            pm.test(\"Middle Name Validate\",function(){\r",
+							"                pm.expect(jsonData.first_name).to.eql.toString(pm.environment.get(\"middle_name\"))\r",
+							"            })\r",
+							"            pm.test(\"Last Name Validate\",function(){\r",
+							"                pm.expect(jsonData.first_name).to.eql.toString(pm.environment.get(\"last_name\"))\r",
+							"            })\r",
+							"            pm.test(\"Date of Birth Validate\",function(){\r",
+							"                pm.expect(jsonData.first_name).to.eql.toString(pm.environment.get(\"last_name\"))\r",
+							"            })\r",
+							"\r",
+							"            break\r",
+							"\r",
+							"        case 404:\r",
+							"        pm.test(\"Not Found\",function(){\r",
+							"        pm.response.to.have.status(404)\r",
+							"        \r",
+							"        })\r",
+							"        break;\r",
+							"    }\r",
+							"\r",
+							"\r",
+							"\r",
+							"//2. Check the length of the response. \r",
+							"\r",
+							"console.log(\"The length of response is =\\t\"+jsonData.length)\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/studentsDetails",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"studentsDetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateStudent",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							"var FirstName = pm.variables.replaceIn(\"{{$randomNamePrefix}}\")\r",
+							"var MiddleName = pm.variables.replaceIn(\"{{$randomFirstName}}\")\r",
+							"var LastName = pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
+							"var DateofBirth = pm.variables.replaceIn(\"{{$randomDatePast}}\")\r",
+							"\r",
+							"\r",
+							"pm.environment.set(\"firstname\",FirstName)\r",
+							"pm.environment.set(\"MiddleName\",MiddleName)\r",
+							"pm.environment.set(\"LastName\",LastName)\r",
+							"// pm.environment.set(\"dateofbirth\",DateofBirth)\r",
+							"\r",
+							"\r",
+							"console.log(\"Random First Name \"+FirstName)\r",
+							"console.log(\"Random Middle Name \"+MiddleName)\r",
+							"console.log(\"Random Last Name \"+LastName)\r",
+							"console.log(\"Date of Birth \"+DateofBirth)\r",
+							"\r",
+							"\r",
+							"// let date = moment().format();\r",
+							"\r",
+							"// console.log(date); // 2022-08-23T16:50:22-07:00\r",
+							"\r",
+							"let moment= require(\"moment\")\r",
+							"let today = moment(DateofBirth).format(\"DD-MM-YYYY\")\r",
+							"pm.environment.set(\"dateOBirth\",today)\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var postJsonData = pm.response.json()\r",
+							"pm.environment.set(\"POST_ID\",postJsonData.id)\r",
+							"\r",
+							"\r",
+							"//1. Write a test case for Status Code Validation.\r",
+							"\r",
+							"\r",
+							"\r",
+							"var rescode = pm.response.code\r",
+							"pm.environment.set(\"PostResCode\",rescode)\r",
+							"\r",
+							"switch(rescode){\r",
+							"\r",
+							"    case 201:\r",
+							"     pm.test(\"POST Methode Status code 201 validated\",function(){\r",
+							"         pm.expect(postJsonData.id).to.eql.toString(\"201\")\r",
+							"     })\r",
+							"     break\r",
+							"    \r",
+							"    \r",
+							"    default:\r",
+							"      pm.test(\"NOT FOUND\")\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\"first_name\": \"{{firstname}}\", \r\n\"middle_name\": \"{{MiddleName}}\", \r\n\"last_name\": \"{{LastName}}\", \r\n\"date_of_birth\": \"{{dateOBirth}}\" \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/studentsDetails",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"studentsDetails"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetSpecificStudent",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json()\r",
+							"var statusCode = pm.response.code\r",
+							"console.log(statusCode)\r",
+							"\r",
+							"switch(statusCode){\r",
+							"\r",
+							"    case 200:\r",
+							"         \r",
+							"        pm.test(\"status code validated\")\r",
+							"\r",
+							"        pm.test(\"First Name validated\",function(){\r",
+							"            pm.expect(jsonData.data.first_name).to.eql(pm.environment.get(\"firstname\"))\r",
+							"        })\r",
+							"        pm.test(\"Middle Name validate\",function(){\r",
+							"            pm.expect(jsonData.data.middle_name).to.eql(pm.environment.get(\"MiddleName\"))\r",
+							"        })\r",
+							"\r",
+							"       \r",
+							"\r",
+							"        pm.test(\"Last Name Validated\",function(){\r",
+							"            pm.expect(jsonData.data.date_of_birth).to.eql(pm.environment.get(\"dateOBirth\"))\r",
+							"        })\r",
+							"\r",
+							"      \r",
+							"\r",
+							"        pm.test(\"Date of Birth validated\",function(){\r",
+							"            pm.expect(jsonData.date_of_birth).to.eql(pm.environment.get(\"dateofbirth\"))\r",
+							"        })\r",
+							"\r",
+							"        break\r",
+							"    case 404:\r",
+							"        pm.test(\"Not Found\",function(){\r",
+							"        pm.response.to.have.status(404)\r",
+							"    })\r",
+							"    break;\r",
+							"\r",
+							"    \r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/studentsDetails/{{POST_ID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"studentsDetails",
+						"{{POST_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateTechnicalSkills",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var rescode = pm.response.code\r",
+							"//pm.environment.set(\"PostResCode\",rescode)\r",
+							"console.log(rescode)\r",
+							"\r",
+							"switch(rescode){\r",
+							"\r",
+							"    case 200:\r",
+							"     pm.test(\"POST Methode Status code 200 validated\")\r",
+							"     break\r",
+							"    case 400:\r",
+							"    pm.test(\"400 Bad Request\")\r",
+							"    break\r",
+							"    \r",
+							"    default:\r",
+							"      pm.test(\"404 NOT FOUND\")\r",
+							"}\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n{ \r\n\"id\": 1, \r\n\"language\": [ \r\n\"sample string 1\", \r\n\"sample string 2\" \r\n], \r\n\"yearexp\": \"sample string 2\", \r\n\"lastused\": \"sample string 3\", \r\n\"st_id\": \"{{POST_ID}}\" \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/technicalskills/",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"technicalskills",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateStudentAddress",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var rescode = pm.response.code\r",
+							"//pm.environment.set(\"PostResCode\",rescode)\r",
+							"console.log(rescode)\r",
+							"\r",
+							"//Write a test case for Status Code Validation. \r",
+							"\r",
+							"\r",
+							"switch(rescode){\r",
+							"\r",
+							"    case 200:\r",
+							"     pm.test(\"POST Methode Status code 200 validated\")\r",
+							"     break\r",
+							"    case 400:\r",
+							"    pm.test(\"400 Bad Request\")\r",
+							"    break\r",
+							"    \r",
+							"    default:\r",
+							"      pm.test(\"404 NOT FOUND\")\r",
+							"}\r",
+							"\r",
+							"\r",
+							"\r",
+							"// 2. Write a test case for status and message field value validation. \r",
+							"\r",
+							"var jsonData = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Test case validated\",function(){\r",
+							"    pm.expect(jsonData.status).to.eql(\"true\")\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Message validated\",function(){\r",
+							"    pm.expect(jsonData.msg).to.eql(\"Add  data success\")\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n\"Permanent_Address\": { \r\n\"House_Number\": \"sample string 1\",\r\n\"City\": \"sample string 2\",\r\n \"State\": \"sample string 3\", \r\n\"Country\": \"sample string 4\",\r\n\"PhoneNumber\": [ \r\n{ \r\n\"Std_Code\": \"sample string 1\",\r\n\"Home\": \"sample string 2\",\r\n \"Mobile\": \"sample string 3\" \r\n},\r\n{ \r\n\"Std_Code\": \"sample string 1\",\r\n\"Home\": \"sample string 2\", \r\n\"Mobile\": \"sample string 3\" \r\n} \r\n] \r\n},\r\n\"stId\": \"{{POST_ID}}\"\r\n} \r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/addresses",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"addresses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FINALSTUDENTDETAILS",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var rescode = pm.response.code\r",
+							"\r",
+							"console.log(rescode)\r",
+							"\r",
+							"//Write a test case for Status Code Validation. \r",
+							"\r",
+							"\r",
+							"switch(rescode){\r",
+							"\r",
+							"    case 200:\r",
+							"     pm.test(\"POST Methode Status code 200 OK validated\")\r",
+							"     break\r",
+							"    case 400:\r",
+							"    pm.test(\"400 Bad Request\")\r",
+							"    break\r",
+							"    \r",
+							"    default:\r",
+							"      pm.test(\"404 NOT FOUND\")\r",
+							"}\r",
+							"\r",
+							"\r",
+							"\r",
+							"// 2. Write a test case for (Language, Year of Experience, House Number, City, Country, Mobile, Current Address) field value validation.\r",
+							"\r",
+							"\r",
+							" var jsonData = pm.response.json()\r",
+							"\r",
+							"    pm.test(\"Language validated\",function(){\r",
+							"        pm.expect(jsonData.data.TechnicalDetails[0].language).to.eql.toString(\"sample string 1\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"Year of Experience validated\",function(){\r",
+							"        pm.expect(jsonData.data.TechnicalDetails[0].yearexp).to.eql(\"sample string 2\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"House Number validated\",function(){\r",
+							"        pm.expect(jsonData.data.Address[0].Permanent_Address.House_Number).to.eql(\"sample string 1\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"City validated\",function(){\r",
+							"        pm.expect(jsonData.data.Address[0].Permanent_Address.City).to.eql(\"sample string 2\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"Country validated\",function(){\r",
+							"        pm.expect(jsonData.data.Address[0].Permanent_Address.Country).to.eql(\"sample string 4\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"Mobile validated\",function(){\r",
+							"        pm.expect(jsonData.data.Address[0].Permanent_Address.PhoneNumber[0].Mobile).to.eql(\"sample string 3\")\r",
+							"    })\r",
+							"\r",
+							"    pm.test(\"Mobile validated\",function(){\r",
+							"        pm.expect(jsonData.data.Address[0].Current_Address).to.eql.toString(\"null\")\r",
+							"    })\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/FinalStudentDetails/{{POST_ID}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"FinalStudentDetails",
+						"{{POST_ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
